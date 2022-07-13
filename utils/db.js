@@ -10,7 +10,7 @@ class Db {
   }
 
   async _load() {
-    this._data = JSON.parse(await readFile(this.dbFileName, 'utf8'));
+    this._data = JSON.parse(await readFile(this.dbFileName, 'utf8')).map((obj) => new ClientRecord(obj));
   }
 
   _save() {
@@ -19,20 +19,20 @@ class Db {
 
   create(obj) {
     const id = uuid();
-    this._data.push({
+    this._data.push(new ClientRecord({
       id,
       ...obj,
-    });
+    }));
     this._save();
     return id;
   }
 
   getAll() {
-    return this._data.map((obj) => new ClientRecord(obj));
+    return this._data;
   }
 
   getOne(id) {
-    return new ClientRecord(this._data.find((oneObj) => oneObj.id === id));
+    return this._data.find((oneObj) => oneObj.id === id);
   }
 
   update(id, newObj) {
